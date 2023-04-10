@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "1004136370315",
+    "project_id": "webrtc-14abf",
+    "storage_bucket": "webrtc-14abf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004136370315:android:e67720d4ea6a0c2e8ec48e",
+        "android_client_info": {
+          "package_name": "com.example.telemedicine_doctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOmvyLEO_5dv4QPIdF-RKZk6m8-cKB_4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004136370315:android:901cf778a7b1a4298ec48e",
+        "android_client_info": {
+          "package_name": "com.example.telemedicine_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOmvyLEO_5dv4QPIdF-RKZk6m8-cKB_4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004136370315:android:832a82b11e41dc6e8ec48e",
+        "android_client_info": {
+          "package_name": "dev.flutterexplained.webrtc_tutorial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOmvyLEO_5dv4QPIdF-RKZk6m8-cKB_4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1004136370315-i42jd2usi9t7ar4orokhvjt0o4t7fk0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
