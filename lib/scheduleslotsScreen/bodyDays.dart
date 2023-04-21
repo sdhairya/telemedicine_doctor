@@ -73,7 +73,7 @@ class _bodyDaysState extends State<bodyDays> {
                         ),
                       ),
                       onTap: () async {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => body(hospitals: widget.hospitals,day: days[index], id: widget.id, hospitalId: widget.hospitalId),));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => body(hospitals: widget.hospitals,day: days[index], id: widget.id, hospitalId: widget.hospitalId, from: "schedule"),));
                       },
                     );
                   },

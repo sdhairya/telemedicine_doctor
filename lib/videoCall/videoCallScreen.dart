@@ -7,29 +7,30 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:telemedicine_doctor/signaling.dart';
 
-import 'api.dart';
-import 'colors.dart';
-import 'components.dart';
-import 'dataClass/dataClass.dart';
+import '../api.dart';
+import '../colors.dart';
+import '../components.dart';
+import '../dataClass/dataClass.dart';
 
-class callScreen extends StatefulWidget {
+class videoCallScreen extends StatefulWidget {
   final String roomId;
   final String role;
   final appointment appointmentData;
   final profile doctorProfile;
+  final List<prescription> pres;
 
 
   // final RTCVideoRenderer localRenderer;
   // final RTCVideoRenderer remoteRenderer;
 
-  const callScreen({Key? key, required this.roomId, required this.role, required this.appointmentData, required this.doctorProfile})
+  const videoCallScreen({Key? key, required this.roomId, required this.role, required this.appointmentData, required this.doctorProfile, required this.pres})
       : super(key: key);
 
   @override
-  State<callScreen> createState() => _callScreenState();
+  State<videoCallScreen> createState() => _videoCallScreenState();
 }
 
-class _callScreenState extends State<callScreen> with SingleTickerProviderStateMixin{
+class _videoCallScreenState extends State<videoCallScreen> with SingleTickerProviderStateMixin{
   Signaling signaling = Signaling();
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
@@ -80,6 +81,12 @@ class _callScreenState extends State<callScreen> with SingleTickerProviderStateM
     // signaling.openUserMedia(_localRenderer, _remoteRenderer);
 
     // _stream = _reference.snapshots();
+    
+    medicines.addAll(widget.pres[0].medicines);
+    symptoms.text = widget.pres[0].symptoms;
+    diagnosis.text = widget.pres[0].diagnosis;
+    test.text = widget.pres[0].test;
+    
     super.initState();
     join();
   }
@@ -915,7 +922,7 @@ class _callScreenState extends State<callScreen> with SingleTickerProviderStateM
                   decoration: UnderlineTabIndicator(
                       borderSide: BorderSide(color: foodInvalid ? Colors.red : Colors.transparent )
                   ),
-                  child: Row(
+                  child: Wrap(
                     children: [
                       InkWell(
                         child:  AnimatedContainer(
@@ -979,15 +986,15 @@ class _callScreenState extends State<callScreen> with SingleTickerProviderStateM
                   decoration: UnderlineTabIndicator(
                       borderSide: BorderSide(color: dayInvalid ? Colors.red : Colors.transparent )
                   ),
-                  child: Row(
+                  child: Wrap(
                     children: [
                       InkWell(
                         child:  AnimatedContainer(
-                          width: MediaQuery.of(context).size.width * 0.22,
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          padding: EdgeInsets.symmetric(vertical: 5),
                           decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
                               borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey),
                               color: morning ? colors().logo_darkBlue : Colors.white
                           ),
                           duration: Duration(milliseconds: 400),
@@ -1010,11 +1017,12 @@ class _callScreenState extends State<callScreen> with SingleTickerProviderStateM
                       SizedBox(width: 5,),
                       InkWell(
                         child:  AnimatedContainer(
-                          width: MediaQuery.of(context).size.width * 0.22,
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          margin: EdgeInsets.symmetric(vertical: 5),
                           decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
                               borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey),
                               color: afternoon ? colors().logo_darkBlue : Colors.white
                           ),
                           duration: Duration(milliseconds: 400),
@@ -1037,10 +1045,10 @@ class _callScreenState extends State<callScreen> with SingleTickerProviderStateM
                       SizedBox(width: 5,),
                       InkWell(
                         child:  AnimatedContainer(
-                          width: MediaQuery.of(context).size.width * 0.22,
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          padding: EdgeInsets.symmetric(vertical: 5),
                           decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
+                              border: Border.all(color: Colors.grey),
                               borderRadius: BorderRadius.circular(10),
                               color: evening ? colors().logo_darkBlue : Colors.white
                           ),

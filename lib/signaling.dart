@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:telemedicine_doctor/videoCallScreen.dart';
+import 'package:telemedicine_doctor/videoCall/videoCallScreen.dart';
 
 typedef void StreamStateCallback(MediaStream stream);
 

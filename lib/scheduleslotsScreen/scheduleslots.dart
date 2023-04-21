@@ -16,7 +16,7 @@ class scheduleslots extends StatelessWidget {
     return FutureBuilder(
       future: api().getHospital(),
       builder: (context, snapshot) {
-        print(snapshot.data);
+        print(hospitalId);
         if(snapshot.hasData){
           return bodyDays(hospitals: snapshot.data!,id: id, hospitalId: hospitalId,);
         }

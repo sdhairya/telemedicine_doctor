@@ -23,6 +23,7 @@ class _bodyState extends State<body> {
   bool _phone = false;
   bool _password = false;
   bool _ischecked = false;
+  bool _isLoading = false;
 
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -174,12 +175,13 @@ class _bodyState extends State<body> {
                                               BorderRadius.circular(15)),
                                           padding: EdgeInsets.fromLTRB(
                                               55, 10, 55, 10)),
-                                      child: components().text("Login",
+                                      child: _isLoading ? CircularProgressIndicator(color: Colors.white,) : components().text("Login",
                                           FontWeight.bold, Colors.white, 22),
                                       onPressed: () async {
                                         setState(() {
                                           _phone = false;
                                           _password = false;
+                                          _isLoading = true;
                                         });
                                         await validateUser();
                                       },
@@ -291,7 +293,7 @@ class _bodyState extends State<body> {
           id = prefs.getString('doctor_id');
         },
       );
-      print(id);
+      print(res[1]);
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => createProfile(id: res[1],),));
       return true;
     }

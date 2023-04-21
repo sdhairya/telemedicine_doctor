@@ -13,7 +13,8 @@ import '../appointments/appointments.dart';
 import '../audioCallScreen.dart';
 import '../editProfile/editProfile.dart';
 import '../profileScreen/profileScreen.dart';
-import '../videoCallScreen.dart';
+import '../videoCall/videoCall.dart';
+import '../videoCall/videoCallScreen.dart';
 
 class body extends StatefulWidget {
   final String id;
@@ -104,7 +105,7 @@ class _bodyState extends State<body> {
                 ),
                 Container(
                     width: double.infinity,
-                    margin: EdgeInsets.only(top: 20),
+                    margin: EdgeInsets.only(top: 20, ),
                     padding: EdgeInsets.only(top: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
@@ -112,64 +113,68 @@ class _bodyState extends State<body> {
                     ),
                     child: Column(
                       children: [
-                        Wrap(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 15,right: 5),
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  SvgPicture.asset('assets/images/totalPatient.svg',),
-                                  SizedBox(width: 5,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      components().text("Total Patients", FontWeight.normal, Color(0xff262626), 16),
-                                      components().text(widget.data[0].stat!.totalPatients.toString(), FontWeight.w500, Color(0xff262626), 24),
-                                      components().text("Till Today", FontWeight.w100, Color(0xff262626), 14),
-                                    ],
-                                  )
-                                ],
+                        Container(
+                          child: Wrap(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 15,right: 5),
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  children: [
+                                    SvgPicture.asset('assets/images/totalPatient.svg',),
+                                    SizedBox(width: 5,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        components().text("Total Patients", FontWeight.normal, Color(0xff262626), 16),
+                                        components().text(widget.data[0].stat!.totalPatients.toString(), FontWeight.w500, Color(0xff262626), 24),
+                                        components().text("Till Today", FontWeight.w100, Color(0xff262626), 14),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 15,left: 5),
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  SvgPicture.asset('assets/images/pendingAppointment.svg',),
-                                  SizedBox(width: 5,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      components().text("Pending Appointments", FontWeight.normal, Color(0xff262626), 16),
-                                      components().text(widget.data[0].stat!.pendingAppointments.toString(), FontWeight.w500, Color(0xff262626), 24),
-                                      components().text(DateFormat.yMMMd().format(DateTime.now()), FontWeight.w200, Color(0xff262626), 14),
-                                    ],
-                                  )
-                                ],
+                              Container(
+                                margin: EdgeInsets.only(top: 15,left: 5),
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  children: [
+                                    SvgPicture.asset('assets/images/pendingAppointment.svg',),
+                                    SizedBox(width: 5,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        components().text("Pending Appointments", FontWeight.normal, Color(0xff262626), 16),
+                                        components().text(widget.data[0].stat!.pendingAppointments.toString(), FontWeight.w500, Color(0xff262626), 24),
+                                        components().text(DateFormat.yMMMd().format(DateTime.now()), FontWeight.w200, Color(0xff262626), 14),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            Container(
-                              // width: MediaQuery.of(context).size.width * 0.5,
-                              margin: EdgeInsets.all(10),
-                              child: Wrap(
-                                children: [
-                                  SvgPicture.asset('assets/images/todayPatient.svg',),
-                                  SizedBox(width: 5,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      components().text("Today Patients", FontWeight.normal, Color(0xff262626), 16),
-                                      components().text(widget.data[0].stat!.todayPatients.toString(), FontWeight.w500, Color(0xff262626), 24),
-                                      components().text(DateFormat.yMMMd().format(DateTime.now()), FontWeight.w200, Color(0xff262626), 14),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                              Container(
+                                // width: MediaQuery.of(context).size.width * 0.5,
+                                margin: EdgeInsets.all(10),
+                                child: Wrap(
+                                  children: [
+                                    SvgPicture.asset('assets/images/todayPatient.svg',),
+                                    SizedBox(width: 5,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        components().text("Today Patients", FontWeight.normal, Color(0xff262626), 16),
+                                        components().text(widget.data[0].stat!.todayPatients.toString(), FontWeight.w500, Color(0xff262626), 24),
+                                        components().text(DateFormat.yMMMd().format(DateTime.now()), FontWeight.w200, Color(0xff262626), 14),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                        )
+                        ,
                         ListTile(
                           leading: components().text("Upcoming", FontWeight.bold, Colors.black, 26),
                           trailing: InkWell(
@@ -236,12 +241,14 @@ class _bodyState extends State<body> {
     if(widget.data[0].app != null){
       return Container(
         // height: MediaQuery.of(context).size.height * 0.2,
-        width: MediaQuery.of(context).size.width * 0.86,
-        margin: EdgeInsets.only(top: 10,bottom: 5, left: 10, right: 10),
+        margin: EdgeInsets.only(top: 10,bottom: 5, left: 15, right: 15),
         padding: EdgeInsets.only(left: 10, right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color(0xfff6f6f4),
+          gradient: new LinearGradient(
+              stops: [0.02, 0.02],
+              colors: [Colors.blue, Color(0xfff6f6f4)]
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -291,7 +298,7 @@ class _bodyState extends State<body> {
                         onPressed: () async {
                           await api().joinAppointment(int.parse(widget.data[0].app!.id!));
                           if( widget.data[0].app!.mode == "video"){
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => callScreen(roomId: widget.data[0].app!.link!, role: "host", appointmentData: widget.data[0].app!, doctorProfile: widget.data[0]),));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => videoCall(roomId: widget.data[0].app!.link!, role: "host", appointmentData: widget.data[0].app!, doctorProfile: widget.data[0]),));
                           }
                           if(widget.data[0].app!.mode! == "audio"){
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => audiCallScreen(roomId: widget.data[0].app!.link!, role: "host", appointmentData: widget.data[0].app!, doctorProfile: widget.data[0]),));

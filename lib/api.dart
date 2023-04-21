@@ -7,12 +7,16 @@ import 'package:telemedicine_doctor/dataClass/dataClass.dart';
 import 'dataClass/dataClass.dart';
 
 class api {
-  String uri = 'http://192.168.1.9:5024/';
+  String uri = 'http://192.168.1.58:5024/';
 
   Future<List<String>> login(String phone, String password) async {
     String url = uri + "api/users/login";
     var res = await http.post(Uri.parse(url),
-        body: json.encode({"phone": phone, "password": password}),
+        body: json.encode({
+          "phone": phone,
+          "password": password,
+          "role": "Doctor"
+        }),
         headers: {
           "Accept": "application/json",
           "content-type": "application/json"
@@ -59,11 +63,21 @@ class api {
 
       appointment? a;
 
-      if(i["user"]["id"] == null){
+      if(i["user"]["getappointment"]["id"] == null){
         a = null;
       }
       else{
-        a = appointment(id: i["user"]["getappointment"]["id"].toString(), image: i["user"]["getappointment"]["image"], name: i["user"]["getappointment"]["name"], date: i["user"]["getappointment"]["date"], gender: i["user"]["getappointment"]["gender"], time: i["user"]["getappointment"]["time"], mode: i["user"]["getappointment"]["mode"], address: i["user"]["getappointment"]["address"], fees: int.parse(i["user"]["getappointment"]["fees"].toString()), link: i["user"]["getappointment"]["link"]);
+        a = appointment(
+            id: i["user"]["getappointment"]["id"].toString(),
+            image: i["user"]["getappointment"]["image"],
+            name: i["user"]["getappointment"]["name"],
+            date: i["user"]["getappointment"]["date"],
+            gender: i["user"]["getappointment"]["gender"],
+            time: i["user"]["getappointment"]["time"],
+            mode: i["user"]["getappointment"]["mode"],
+            address: i["user"]["getappointment"]["address"],
+            fees: int.parse(i["user"]["getappointment"]["fees"].toString()),
+            link: i["user"]["getappointment"]["link"]);
 
     }
 
@@ -101,7 +115,7 @@ class api {
   }
 
   Future<List<hospital>> getHospital() async {
-    var url = "api/facilities/name";
+    var url = "api/facilities";
     var res = await http.get(Uri.parse(uri + url));
     var data = json.decode(res.body);
     print(data);
@@ -111,7 +125,8 @@ class api {
           id: int.parse(data[i]["id"].toString()),
           name: data[i]["name"],
           address: data[i]["address"],
-          phone: data[i]["phone"]));
+          phone: data[i]["phone"],
+      email: data[i]["email"]));
     }
     print(hospitals);
     return hospitals;
@@ -181,7 +196,7 @@ class api {
   }
 
   Future<String> createProfile(profile data, doctor doctorData) async {
-    print(data);
+    print(data.id);
     print(doctorData);
     var url = "api/doctors/basic?id=" + data.id;
     var request = http.MultipartRequest('PUT', Uri.parse(uri + url));
@@ -201,7 +216,7 @@ class api {
     print(response.statusCode);
     // print(response.body);
 
-    var urlDoc = "api/doctors?phone=" + data.phone;
+    var urlDoc = "api/doctors?id=" + data.id;
     var reqDoc = http.MultipartRequest("POST", Uri.parse(uri + urlDoc));
 
     reqDoc.fields.addAll({
@@ -220,13 +235,20 @@ class api {
       reqDoc.files.add(await http.MultipartFile.fromPath(
           'document', doctorData.degree[i].docPath));
     }
-    for (var i = 0; i < doctorData.otherAchievements.length; i++) {
-      reqDoc.fields.addAll({
-        "otherachivement": doctorData.otherAchievements[i].name,
-      });
-      reqDoc.files.add(await http.MultipartFile.fromPath(
-          'otherachivementdoc', doctorData.otherAchievements[i].docPath));
+
+    if(doctorData.otherAchievements.isNotEmpty){
+      for (var i = 0; i < doctorData.otherAchievements.length; i++) {
+        reqDoc.fields.addAll({
+          "otherachivement": doctorData.otherAchievements[i].name,
+        });
+        reqDoc.files.add(await http.MultipartFile.fromPath(
+            'otherachivementdoc', doctorData.otherAchievements[i].docPath));
+      }
     }
+    else{
+
+    }
+
 
     var resDoc = await reqDoc.send();
     print(resDoc.statusCode);
@@ -234,7 +256,28 @@ class api {
     return "Success";
   }
 
+  Future<String> addHospital(hospital hospitalData) async {
+
+    var url = "api/facilities";
+    var request = await http.post(Uri.parse(uri+url),
+        body: json.encode({
+          "name":hospitalData.name,
+          "phone": hospitalData.phone,
+          "address": hospitalData.address,
+          "email" : hospitalData.email
+        }),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        },
+        encoding: Encoding.getByName('utf-8'));
+
+    print(request.statusCode);
+    return "Success";
+  }
+
   Future<String> update_schedule(String id, update_Schedule schedule) async {
+    print(id);
     var url = "api/scheduler?id=" + id;
     var request = await http.put(Uri.parse(uri + url),
         body: json.encode({
@@ -279,7 +322,8 @@ class api {
   }
 
   Future<List<String>> getDaysAck(String id) async {
-    var url = "api/scheduler/days?id=" + id;
+    print(id);
+    var url = "api/schedule/days?id=" + id;
     var res = await http.get(Uri.parse(uri + url));
     var data = json.decode(res.body);
     print(data);
@@ -300,32 +344,42 @@ class api {
     for (var i in data) {
       schedule.add(dayTime(
           morning: currentSchedule(
-            id: int.parse(i["morning"]["id"].toString()),
-              slots: i["morning"]["slots"].toString().split(","),
-              facility: hospital(
+            id: i["morning"]["id"].toString(),
+              slots: i["morning"]["slots"].toString() == null ? [] : i["morning"]["slots"].toString().split(","),
+              facility: i["morning"]["facility"] == null
+                  ? null
+                  : hospital(
                   id: int.parse(i["morning"]["facility"]["id"].toString()),
                   name: i["morning"]["facility"]["name"],
                   address: i["morning"]["facility"]["address"],
-                  phone: i["morning"]["facility"]["phone"]),
-              mode: i["morning"]["mode"]),
+                  phone: i["morning"]["facility"]["phone"],
+                email: i["morning"]["facility"]["email"]
+              ),
+              mode: i["morning"]["mode"] == null ? "" : i["morning"]["mode"]),
           afternoon: currentSchedule(
-              id: int.parse(i["afternoon"]["id"].toString()),
-              slots: i["afternoon"]["slots"].toString().split(","),
-              facility: hospital(
+              id: i["afternoon"]["id"].toString(),
+              slots: i["afternoon"]["slots"].toString() == null ? [] : i["afternoon"]["slots"].toString().split(","),
+              facility: i["afternoon"]["facility"] == null
+                  ? null
+                  :hospital(
                   id: int.parse(i["afternoon"]["facility"]["id"].toString()),
                   name: i["afternoon"]["facility"]["name"],
                   address: i["afternoon"]["facility"]["address"],
-                  phone: i["afternoon"]["facility"]["phone"]),
-              mode: i["afternoon"]["mode"]),
+                  phone: i["afternoon"]["facility"]["phone"],
+                  email: i["afternoon"]["facility"]["email"]),
+              mode: i["afternoon"]["mode"] == null ? "" : i["afternoon"]["mode"]),
           evening: currentSchedule(
-              id: int.parse(i["evening"]["id"].toString()),
-              slots: i["evening"]["slots"].toString().split(","),
-              facility: hospital(
+              id: i["evening"]["id"].toString(),
+              slots: i["evening"]["slots"].toString() == null ? [] : i["evening"]["slots"].toString().split(","),
+              facility: i["evening"]["facility"] == null
+                  ? null
+                  : hospital(
                   id: int.parse(i["evening"]["facility"]["id"].toString()),
                   name: i["evening"]["facility"]["name"],
                   address: i["evening"]["facility"]["address"],
-                  phone: i["evening"]["facility"]["phone"]),
-              mode: i["evening"]["mode"])));
+                  phone: i["evening"]["facility"]["phone"],
+                  email: i["evening"]["facility"]["email"]),
+              mode: i["evening"]["mode"] == null ? "" : i["evening"]["mode"])));
     }
     print(schedule);
     return schedule;
@@ -382,7 +436,7 @@ class api {
     var url = "api/prescription?id="+id.toString();
     var request = await http.post(Uri.parse(uri + url),
         body: json.encode({
-          "appointment_id": id,
+          "id": id,
         }),
         headers: {
           "Accept": "application/json",
@@ -411,6 +465,94 @@ class api {
     print(request.body);
     // print(response.body);
     return "Success";
+  }
+
+
+  Future<String> sch(String id, String data) async {
+    print(id);
+    var url = "api/schedule?id="+id;
+    var request = await http.put(Uri.parse(uri + url),
+        body: json.encode({
+          "daytime" : data,
+        }),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        },
+        encoding: Encoding.getByName('utf-8')
+    );
+    print(request.body);
+    // print(response.body);
+    return "Success";
+  }
+
+  Future<Time> getDays(String id, String d) async {
+    var url = "api/schedule?id=" + id + "&day=" + d;
+    var res = await http.get(Uri.parse(uri + url));
+    var data = json.decode(res.body);
+    print(data);
+    Time schedule = Time(morning: null, afternoon: null, evening: null);
+    for (var i in data) {
+      schedule.id = int.parse(i["id"].toString());
+      schedule.morning = day(slots: i["daytime"]["morning"]["slots"].toString().split(","), mode: i["daytime"]["morning"]["mode"], facilities_id: i["daytime"]["morning"]["facilities_id"].toString());
+      schedule.afternoon = day(slots: i["daytime"]["afternoon"]["slots"].toString().split(","), mode: i["daytime"]["afternoon"]["mode"], facilities_id: i["daytime"]["afternoon"]["facilities_id"].toString());
+      schedule.evening = day(slots: i["daytime"]["evening"]["slots"].toString().split(","), mode: i["daytime"]["evening"]["mode"], facilities_id: i["daytime"]["evening"]["facilities_id"].toString());
+
+    }
+    print(schedule);
+    return schedule;
+  }
+
+  Future<String> insertSch(String data, String id,String day) async {
+    print(id);
+    var url = "api/schedule?id=" + id;
+    var request = await http.post(Uri.parse(uri + url),
+        body: json.encode({
+          "day": day,
+          "daytime": data
+        }),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        },
+        encoding: Encoding.getByName('utf-8'));
+    print(request.statusCode);
+    print(request.body);
+
+    return " ";
+  }
+
+  Future<List<prescription>> getPrescription(String id) async {
+    // print(id);
+    var url = "api/prescription/byid?id=" + id;
+    var res = await http.get(Uri.parse(uri + url));
+    var data = json.decode(res.body);
+    // print(data);
+    List<prescription> pre = [];
+    for (var i in data) {
+      // getMedicines(i["medicines"]);
+      if(i["medicines"] == null){
+        pre.add(prescription(symptoms: i["symptoms"], test: i["test"], diagnosis: i["diagnosis"], medicines: []));
+      }
+      else{
+        pre.add(prescription(symptoms: i["symptoms"], test: i["test"], diagnosis: i["diagnosis"], medicines: getMedicines(i["medicines"])));
+
+      }
+      // pre[i].medicines = getMedicines(i["medicines"]);
+
+    }
+    // print(pre);
+    return pre;
+  }
+
+  List<medicine> getMedicines(data) {
+
+    List<medicine> m = [];
+    for(var i in data){
+      m.add(medicine(name: i["name"], quantity: int.parse(i["quantity"].toString()), duration: int.parse(i["duration"].toString()), food: (i['food'] as List).map((item) => item as String?).toList(), daytime: (i['daytime'] as List).map((item) => item as String?).toList()));
+    }
+    return m;
+
   }
 
 }

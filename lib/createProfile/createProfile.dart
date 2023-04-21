@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:telemedicine_doctor/api.dart';
+import 'package:telemedicine_doctor/dataClass/dataClass.dart';
 
 import 'body.dart';
 
@@ -19,7 +20,9 @@ class _createProfileState extends State<createProfile> {
     return FutureBuilder(
       future: api().getHospital(),
     builder: (context, snapshot) {
+        print(widget.id);
       if(snapshot.hasData){
+        snapshot.data!.add(hospital(id: 0, name: "+ Other Hospital", address: "", phone: "", email: ""));
         return body(hospitals: snapshot.data!,id:  widget.id,);
       }
       return Scaffold(

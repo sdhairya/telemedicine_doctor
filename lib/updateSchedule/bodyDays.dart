@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:telemedicine_doctor/colors.dart';
 import 'package:telemedicine_doctor/components.dart';
 import 'package:telemedicine_doctor/dashboardScreen/dashboardScreen.dart';
-import 'package:telemedicine_doctor/updateSchedule/body.dart';
+import 'package:telemedicine_doctor/updateSchedule/body.dart' as update;
+import "package:telemedicine_doctor/scheduleslotsScreen/body.dart" as add;
 
 import '../api.dart';
 import '../dataClass/dataClass.dart';
@@ -25,55 +26,178 @@ class _bodyDaysState extends State<bodyDays> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
-          child: Container(
-            margin: EdgeInsets.only(top: 20, left: 10),
-            child: ListTile(
-              leading: components().backButton(context),
-              title: components().text("    Schedule Timings", FontWeight.bold, Colors.black, 25),
-            ),
-          ),
-        ),
-        body: ListView.builder(
-          itemCount: days.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              child: Container(
-                margin: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3, blurStyle: BlurStyle.outer)]
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Wrap(
-                      children: [
-                        Icon(Icons.calendar_month_outlined, color: colors().logo_lightBlue, size: 23),
-                        SizedBox(width: 5,),
-                        components().text(days[index], FontWeight.w500, colors().logo_darkBlue, 20),
-                        SizedBox(width: 5,),
-                      ],
+
+    return FutureBuilder(
+      future: api().getDaysAck(widget.id),
+      builder: (context, snapshot) {
+        print(snapshot.data);
+        print(widget.id);
+        if(snapshot.hasData){
+          return SafeArea(
+            child: Scaffold(
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
+                child: Container(
+                  margin: EdgeInsets.only(top: 20, left: 10),
+                  child: ListTile(
+                    leading: ElevatedButton(
+                      child: Icon(Icons.arrow_back_ios_new, size: 30, color: Color(0xff383434)),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xfff6f6f4),
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.only(top: 10, bottom: 10,left: 5, right: 5)
+                      ),
+                      onPressed: () {
+
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => dashboardScreen(id: widget.id),));
+
+                      },
                     ),
-                    Icon(CupertinoIcons.forward)
-                  ],
+                    title: components().text("    Schedule Timings", FontWeight.bold, Colors.black, 25),
+                  ),
                 ),
               ),
-              onTap: () async {
+              body: ListView.builder(
+                itemCount: days.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3, blurStyle: BlurStyle.outer)]
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Wrap(
+                            children: [
+                              Icon(Icons.calendar_month_outlined, color: colors().logo_lightBlue, size: 23),
+                              SizedBox(width: 5,),
+                              components().text(days[index], FontWeight.w500, colors().logo_darkBlue, 20),
+                              SizedBox(width: 5,),
+                              snapshot.data!.contains(days[index]) ? Icon(Icons.check_circle, color: Colors.green,) : Container(),
 
-                var schedule = await api().getDaysData(widget.id, days[index]);
+                            ],
+                          ),
+                          Icon(CupertinoIcons.forward)
+                        ],
+                      ),
+                    ),
+                    onTap: () async {
+                      showDialog(context: context, builder: (context) {
+                        return Container(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(),
+                        );
+                      },);
+                      // var schedule = await api().getDaysData(widget.id, days[index]);
+                      var schedule = await api().getDays(widget.id, days[index]);
+                      print(days[index]+"||||||||||||||||||||||||");
 
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => body(hospitals: widget.hospitals,day: days[index], id: widget.id, schedule: schedule, ),));
-              },
-            );
-          },
-        ),
-      ),
+                      if(snapshot.data!.contains(days[index])){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => update.body(hospitals: widget.hospitals,day: days[index], id: widget.id, schedule: schedule, ),));
+                      }
+                      else{
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => add.body(hospitals: widget.hospitals,day: days[index], id: widget.id, hospitalId: 0, from: "update"),));
+                      }
+                    },
+                  );
+                },
+              ),
+              // bottomNavigationBar: Container(
+              //   height: MediaQuery.of(context).size.height * 0.1,
+              //   alignment: Alignment.center,
+              //   child: ElevatedButton(
+              //       style: ElevatedButton.styleFrom(
+              //           backgroundColor: colors().logo_darkBlue,
+              //           padding: EdgeInsets.only(
+              //               top: 10,
+              //               bottom: 10,
+              //               left: MediaQuery.of(context).size.width * 0.15,
+              //               right: MediaQuery.of(context).size.width * 0.15),
+              //           shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(10))),
+              //       child: components().text("Submit", FontWeight.bold, Colors.white, 22),
+              //       onPressed: () {
+              //         Navigator.of(context).push(MaterialPageRoute(builder: (context) => dashboardScreen(id:  widget.id),));
+              //       }
+              //   ),
+              // ),
+            ),
+          );
+        }
+        return Scaffold(
+          body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(backgroundColor: Colors.black,),
+          ),
+        );
+
+      },
     );
+
+    // return SafeArea(
+    //   child: Scaffold(
+    //     appBar: PreferredSize(
+    //       preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.1),
+    //       child: Container(
+    //         margin: EdgeInsets.only(top: 20, left: 10),
+    //         child: ListTile(
+    //           leading: components().backButton(context),
+    //           title: components().text("    Schedule Timings", FontWeight.bold, Colors.black, 25),
+    //         ),
+    //       ),
+    //     ),
+    //     body: ListView.builder(
+    //       itemCount: days.length,
+    //       itemBuilder: (context, index) {
+    //         return InkWell(
+    //           child: Container(
+    //             margin: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+    //             padding: EdgeInsets.all(15),
+    //             decoration: BoxDecoration(
+    //                 borderRadius: BorderRadius.circular(10),
+    //                 boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3, blurStyle: BlurStyle.outer)]
+    //             ),
+    //             child: Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Wrap(
+    //                   crossAxisAlignment: WrapCrossAlignment.center,
+    //                   children: [
+    //                     Icon(Icons.calendar_month_outlined, color: colors().logo_lightBlue, size: 23),
+    //                     SizedBox(width: 5,),
+    //                     components().text(days[index], FontWeight.w500, colors().logo_darkBlue, 20),
+    //                     SizedBox(width: 5,),
+    //                   ],
+    //                 ),
+    //                 Icon(CupertinoIcons.forward)
+    //               ],
+    //             ),
+    //           ),
+    //           onTap: () async {
+    //
+    //             showDialog(context: context, builder: (context) {
+    //               return Container(
+    //                     alignment: Alignment.center,
+    //                     child: CircularProgressIndicator(),
+    //                   );
+    //             },);
+    //             // var schedule = await api().getDaysData(widget.id, days[index]);
+    //             var schedule = await api().getDays(widget.id, days[index]);
+    //
+    //             Navigator.pop(context);
+    //             Navigator.of(context).push(MaterialPageRoute(builder: (context) => body(hospitals: widget.hospitals,day: days[index], id: widget.id, schedule: schedule, ),));
+    //           },
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // );
 
 
 

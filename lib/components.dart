@@ -84,23 +84,18 @@ class components extends StatefulWidget {
     );
   }
 
-  InkWell backButton(BuildContext context){
-
-    return InkWell(
-      child: Container(
-        padding: EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          shape: BoxShape.rectangle,
-          color: Color(0xfff6f6f4),
-          boxShadow: [
-            BoxShadow(color: Colors.grey,blurRadius: 2)
-          ]
-        ),
-        child: Icon(Icons.arrow_back_ios_new, size: 30, color: Color(0xff383434)),
+  ElevatedButton backButton(BuildContext context){
+    return ElevatedButton(
+      child: Icon(Icons.arrow_back_ios_new, size: 30, color: Color(0xff383434)),
+      style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xfff6f6f4),
+          shape: CircleBorder(),
+          padding: EdgeInsets.only(top: 10, bottom: 10,left: 5, right: 5)
       ),
-      onTap: () {
+      onPressed: () {
+
         Navigator.of(context).pop();
+
       },
     );
   }

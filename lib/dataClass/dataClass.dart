@@ -86,14 +86,15 @@ class hospital{
   String name = "";
   String address = "";
   String phone = "";
+  String email = "";
 
   hospital({
-    required this.id, required this.name, required this.address, required this.phone
+    required this.id, required this.name, required this.address, required this.phone, required this.email
 });
 
   @override
   String toString() {
-    return "$id\n$name\n$address\n$phone";
+    return "$id\n$name\n$address\n$phone\n$email";
   }
 }
 
@@ -151,9 +152,9 @@ class timings {
 }
 
 class dayTime {
-  currentSchedule morning = currentSchedule(id: 0,slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone"), mode: "mode");
-  currentSchedule afternoon = currentSchedule(id: 0,slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone"), mode: "mode");
-  currentSchedule evening = currentSchedule(id: 0,slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone"), mode: "mode");
+  currentSchedule morning = currentSchedule(id: "NA",slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone", email: "email"), mode: "mode");
+  currentSchedule afternoon = currentSchedule(id: "NA",slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone", email: "email"), mode: "mode");
+  currentSchedule evening = currentSchedule(id: "NA",slots: [], facility: hospital(id: 0, name: "name", address: "address", phone: "phone", email: "email"), mode: "mode");
 
   dayTime({
    required this.morning, required this.afternoon, required this.evening
@@ -167,9 +168,9 @@ class dayTime {
 
 class currentSchedule{
 
-  int id = 0;
+  String id = "NA";
   List<String> slots = [];
-  hospital facility = hospital(id: 0, name: "name", address: "address", phone: "phone");
+  hospital? facility = hospital(id: 0, name: "name", address: "address", phone: "phone", email: "email");
   String mode = "";
 
   currentSchedule({
@@ -223,6 +224,8 @@ class appointment{
   }
 }
 
+
+
 class medicine{
 
   String? name = "";
@@ -262,3 +265,44 @@ class prescription{
   }
 
 }
+
+class day{
+  List<String> slots = [];
+  String mode = "";
+  String? facilities_id = null;
+
+  day({
+    required this.slots, required this.mode, required this.facilities_id
+});
+
+  @override
+  String toString() {
+    return "$slots\n$mode\n$facilities_id";
+  }
+
+  Map toJson() {
+    return {'slots': slots, 'mode': mode, 'facilities_id': facilities_id.toString()};
+  }
+
+}
+
+class Time {
+  int? id = null;
+  day? morning = day(slots: [], mode: "", facilities_id: null);
+  day? afternoon = day(slots: [], mode: "", facilities_id: null);
+  day? evening = day(slots: [], mode: "", facilities_id: null);
+
+  Time({
+    required this.morning, required this.afternoon, required this.evening
+  });
+
+  @override
+  String toString() {
+    return "$morning\n$afternoon\n$evening";
+  }
+
+  Map toJson() {
+    return {'morning': morning, 'afternoon': afternoon, 'evening': evening};
+  }
+}
+
