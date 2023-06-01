@@ -266,6 +266,25 @@ class prescription{
 
 }
 
+class history{
+
+  String? time = "";
+  String? date = "";
+  String? symptoms = "";
+  String? test = "";
+  String? diagnosis = "";
+  List<medicine>? medicines = [];
+
+  history(
+      {required this.time, required this.date,required this.symptoms, required this.test, required this.diagnosis, required this.medicines});
+
+  @override
+  String toString() {
+    return "$time\n$date\n$symptoms\n$test\n$diagnosis\n$medicines";
+  }
+
+}
+
 class day{
   List<String> slots = [];
   String mode = "";

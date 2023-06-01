@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:telemedicine_doctor/api.dart';
 import 'package:telemedicine_doctor/audioCallScreen.dart';
+import 'package:telemedicine_doctor/visitConsult/visitConsult.dart';
 
 import '../colors.dart';
 import '../components.dart';
@@ -714,6 +715,10 @@ class _bodyState extends State<body> {
                                                                 }
                                                                 if(snapshot.data![index].mode == "audio"){
                                                                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => audiCallScreen(roomId: snapshot.data![index].link!, role: "host", appointmentData: snapshot.data![index], doctorProfile: widget.doctorProfile),));
+                                                                }
+                                                                if(snapshot.data![index].mode == "visit"){
+                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => visitConsult(appointmentData: snapshot.data![index], doctorProfile: widget.doctorProfile),));
+
                                                                 }
                                                               },
                                                             )

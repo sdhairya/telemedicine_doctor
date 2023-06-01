@@ -7,7 +7,7 @@ import 'package:telemedicine_doctor/dataClass/dataClass.dart';
 import 'dataClass/dataClass.dart';
 
 class api {
-  String uri = 'http://192.168.1.58:5024/';
+  String uri = 'http://192.168.1.15:5024/';
 
   Future<List<String>> login(String phone, String password) async {
     String url = uri + "api/users/login";
@@ -63,7 +63,7 @@ class api {
 
       appointment? a;
 
-      if(i["user"]["getappointment"]["id"] == null){
+      if(i["user"]["getappointment"]["id"] == 0){
         a = null;
       }
       else{
@@ -449,6 +449,27 @@ class api {
     return request.statusCode;
   }
 
+  Future<List<history>> getHistory(String id) async {
+    // print(id);
+    var url = "api/prescription/history?id=" + id;
+    var res = await http.get(Uri.parse(uri + url));
+    var data = json.decode(res.body);
+    print(data);
+    List<history> his = [];
+    for (var i in data) {
+      his.add(history(
+          time: i["time"].toString().isEmpty ? "No Data" : i["time"].toString(),
+          date: i["date"].toString().isEmpty ? "No Data" : i["date"].toString(),
+          symptoms: i["symptoms"].toString().isEmpty ? "No Data" : i["symptoms"].toString(),
+          test: i["test"].toString().isEmpty ? "No Data" : i["test"].toString(),
+          diagnosis: i["diagnosis"].toString().isEmpty ? "No Data" : i["diagnosis"].toString(),
+          medicines: i["medicines"] == null ? [medicine(name: "name", quantity: 0, duration: 0, food: [""], daytime: [""])] : getMedicines(i["medicines"])
+      ));
+    }
+    print(his);
+    return his;
+  }
+
   Future<String> prescribe(String id, String columnName, String data) async {
     var url = "api/prescription?id=" + id;
     var request = await http.put(Uri.parse(uri + url),
@@ -553,6 +574,44 @@ class api {
     }
     return m;
 
+  }
+
+  Future<String> doctorAck(String id) async {
+    String url = uri + "api/users/acknowledgement";
+    var res = await http.post(Uri.parse(url),
+        body: json.encode({
+          "appointment_id":id,
+          "doctor": "Joined"
+        }),
+        headers: {
+          "Accept": "application/json",
+          "content-type":"application/json"
+        },
+        encoding: Encoding.getByName('utf-8'));
+
+    print(res.statusCode);
+    print(res.body);
+    return res.body.toString();
+
+  }
+
+  Future<String> patientAck(String id) async {
+    var url = "api/users/acknowledgement?id=" + id;
+    var request = await http.put(Uri.parse(url),
+        body: json.encode({
+          "patient": "Joined"
+        }),
+        headers: {
+          "Accept": "application/json",
+          "content-type":"application/json"
+        },
+        encoding: Encoding.getByName('utf-8')
+    );
+
+
+    print(request.body);
+    // print(response.body);
+    return json.decode(request.body);
   }
 
 }

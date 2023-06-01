@@ -616,7 +616,7 @@ class _bodyState extends State<body> {
               ),
               onPressed: () {
                 setState(() {
-
+                  degree.clear();
                   degree.add(docs(name: _degreeController.text, docPath: filePath.toString()));
 
                 });
@@ -680,7 +680,7 @@ class _bodyState extends State<body> {
               ),
               onPressed: () {
                 setState(() {
-
+                  otherAchievement.clear();
                   otherAchievement.add(docs(name: _otherController.text, docPath: filePath.toString()));
 
                 });

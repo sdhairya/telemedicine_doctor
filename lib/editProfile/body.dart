@@ -558,8 +558,8 @@ class _bodyState extends State<body> {
                     leading: Icon(Icons.file_upload_rounded,color: colors().logo_darkBlue),
                     title: components().text("Choose File", FontWeight.w500, colors().logo_darkBlue, 16),
                   ),
-                  onTap: () {
-                    _getDocuments();
+                  onTap: () async {
+                    await _getDocuments();
                   },
                 ),
               ),
@@ -578,7 +578,7 @@ class _bodyState extends State<body> {
               ),
               onPressed: () {
                 setState(() {
-
+                  degree.clear();
                   degree.add(docs(name: _degreeController.text, docPath: filePath.toString()));
                   updatedDegree.add(docs(name: _degreeController.text, docPath: filePath.toString()));
 
@@ -623,8 +623,8 @@ class _bodyState extends State<body> {
                     leading: Icon(Icons.file_upload_rounded,color: colors().logo_darkBlue),
                     title: components().text("Choose File", FontWeight.w500, colors().logo_darkBlue, 16),
                   ),
-                  onTap: () {
-                    _getDocuments();
+                  onTap: () async {
+                    await _getDocuments();
                   },
                 ),
               ),
@@ -643,8 +643,9 @@ class _bodyState extends State<body> {
               ),
               onPressed: () {
                 setState(() {
-
+                  otherAchievement.clear();
                   otherAchievement.add(docs(name: _otherController.text, docPath: filePath.toString()));
+                  print(_otherController.text);
                   updatedOtherAchievement.add(docs(name: _otherController.text, docPath: filePath.toString()));
 
                 });
