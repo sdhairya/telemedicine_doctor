@@ -248,6 +248,7 @@ class _bodyState extends State<body> {
           gradient: new LinearGradient(
               stops: [0.02, 0.02],
               colors: [Colors.blue, Color(0xfff6f6f4)]
+
           ),
         ),
         child: Column(
